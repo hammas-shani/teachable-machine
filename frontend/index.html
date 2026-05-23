@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teachable Machine Pro</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+
+<body>
+
+  <!-- MAIN APP -->
+  <div class="app-container">
+
+    <!-- SVG CONNECTORS -->
+    <svg class="connector-svg" aria-hidden="true"></svg>
+
+    <!-- LEFT PANEL -->
+    <section class="left-panel">
+
+      <div id="classes-container"></div>
+
+      <!-- ADD CLASS -->
+      <button type="button" class="add-class-btn" id="add-class-btn">
+        <span class="material-symbols-outlined">add</span> Add a class
+      </button>
+
+    </section>
+
+    <!-- CENTER PANEL -->
+    <section class="center-panel">
+
+      <div class="training-card">
+
+        <h2>Training</h2>
+
+        <button type="button" class="train-btn" id="train-btn" disabled>
+          Train Model
+        </button>
+        <div class="training-status" id="training-status" style="display: none;"></div>
+
+        <div class="advanced-box">
+          <div class="advanced-header" id="advanced-header">
+            <span>Advanced</span>
+            <span class="arrow material-symbols-outlined" id="advanced-arrow">expand_more</span>
+          </div>
+
+          <div class="advanced-content" id="advanced-content" style="display: none;">
+            <div class="adv-row">
+              <label>Epochs:</label>
+              <div class="adv-input-group">
+                <input type="number" value="50" class="adv-input" id="epochs-input">
+                <span class="material-symbols-outlined help-icon">help_outline</span>
+              </div>
+            </div>
+
+            <div class="adv-row">
+              <label>Batch Size:</label>
+              <div class="adv-input-group">
+                <select class="adv-input" id="batch-input">
+                  <option value="16">16</option>
+                  <option value="32">32</option>
+                  <option value="64">64</option>
+                </select>
+                <span class="material-symbols-outlined help-icon">help_outline</span>
+              </div>
+            </div>
+
+            <div class="adv-row">
+              <label>Learning Rate:</label>
+              <div class="adv-input-group">
+                <input type="number" step="0.001" value="0.001" class="adv-input" id="lr-input">
+                <span class="material-symbols-outlined help-icon">help_outline</span>
+              </div>
+            </div>
+
+            <div class="adv-row">
+              <label>Face Mode:</label>
+              <div class="adv-input-group" style="justify-content: flex-end;">
+                <label class="switch" title="When ON, model only predicts if a face is detected.">
+                  <input type="checkbox" id="face-mode-toggle">
+                  <span class="slider round"></span>
+                </label>
+                <span class="material-symbols-outlined help-icon" title="Turn ON if you only want to detect faces. Turn OFF to detect any object (like Google Teachable Machine).">help_outline</span>
+              </div>
+            </div>
+
+            <div class="adv-row">
+              <label>Conf Threshold:</label>
+              <div class="adv-input-group">
+                <input type="number" step="0.05" min="0" max="1" value="0.75" class="adv-input" id="confidence-threshold-input">
+                <span class="material-symbols-outlined help-icon" title="If confidence is below this (e.g. 0.75), returns Unknown instead of forcing a class.">help_outline</span>
+              </div>
+            </div>
+
+            <div class="adv-divider"></div>
+
+            <button type="button" class="adv-action-btn">
+              Reset Defaults <span class="material-symbols-outlined">history</span>
+            </button>
+            <div class="adv-divider"></div>
+            <button type="button" class="adv-action-btn">
+              Under the hood <span class="material-symbols-outlined">bar_chart</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- RIGHT PANEL -->
+    <section class="right-panel">
+
+      <div class="preview-card">
+
+        <!-- PREVIEW HEADER -->
+        <div class="preview-header">
+          <h2>Preview</h2>
+          <div class="export-dropdown">
+            <button type="button" id="export-btn-top" class="export-btn"
+              style="background:#e8f0fe; color:#1967d2; border:1px solid #d2e3fc;">
+              <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">upload</span>
+              Export Model
+            </button>
+            <div class="export-dropdown-menu" id="export-menu">
+              <button data-format="json">
+                <span class="material-symbols-outlined">data_object</span>
+                Centroids Data
+                <span class="format-badge">JSON</span>
+              </button>
+              <button data-format="pkl">
+                <span class="material-symbols-outlined">integration_instructions</span>
+                Full Python Object
+                <span class="format-badge">PKL</span>
+              </button>
+              <button data-format="h5">
+                <span class="material-symbols-outlined">folder_zip</span>
+                Keras MobileNetV2
+                <span class="format-badge">H5 ZIP</span>
+              </button>
+              <button data-format="keras">
+                <span class="material-symbols-outlined">folder_zip</span>
+                Keras MobileNetV2
+                <span class="format-badge">KERAS ZIP</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div id="preview-empty">
+          <p class="preview-text">
+            You must train a model on the left before you can preview it here.
+          </p>
+        </div>
+
+
+        <div id="preview-active" style="display: none;">
+          <div class="preview-input-header">
+            <span>Input</span>
+            <label class="switch">
+              <input type="checkbox" checked id="preview-input-toggle">
+              <span class="slider round"></span>
+            </label>
+            <span>ON</span>
+            <select id="preview-source-select" class="preview-source-select">
+              <option value="webcam">Webcam</option>
+              <option value="file">File</option>
+            </select>
+          </div>
+
+          <div class="preview-webcam-box" style="position: relative; overflow: hidden; border-radius: 8px;">
+            <video id="preview-video" autoplay playsinline muted
+              style="width: 100%; height: 100%; object-fit: cover;"></video>
+            <img id="preview-image"
+              style="display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" />
+            <input type="file" id="preview-file-input" style="display: none;" accept="image/*" />
+            <div class="preview-webcam-controls" style="position: absolute; top: 8px; right: 8px; z-index: 10;">
+              <span class="material-symbols-outlined">crop</span>
+              <span class="material-symbols-outlined">splitscreen</span>
+            </div>
+          </div>
+
+          <div class="preview-arrow-down">
+            <span class="material-symbols-outlined">arrow_downward</span>
+          </div>
+
+          <div class="preview-output-section">
+            <h3>Output <span id="uncertain-badge"
+                style="color:#d93025; font-size: 14px; font-weight:bold; display:none; margin-left:8px;">(Uncertain)</span>
+            </h3>
+            <div id="preview-bars">
+              <!-- Bars injected dynamically -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+
+</body>
+
+</html>

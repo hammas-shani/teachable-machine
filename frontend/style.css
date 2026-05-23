@@ -1,0 +1,240 @@
+* { margin:0; padding:0; box-sizing:border-box }
+
+html, body { min-height:100% }
+
+body {
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f6f8f7;
+  margin: 0;
+  padding: 18px;
+  color: #222;
+}
+
+button, input { font: inherit }
+button { cursor: pointer }
+
+/* Ensure the layout lets children expand fully for sticky headers */
+.app-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 320px 1fr 380px;
+  gap: 18px;
+  align-items: stretch;
+}
+
+/* Allow center and right panels to fill vertical space if needed */
+.left-panel, .center-panel, .right-panel {
+  position: relative;
+  z-index: 2;
+  height: 100%; /* For sticky elements to scroll inside grid columns */
+}
+
+/* We don't apply background/shadow to the panels themselves, but to their contents,
+   so the connectors draw correctly over the background and the sticky elements work. */
+.center-panel { display:flex; justify-content:center; align-items:flex-start }
+
+.connector-svg { position: fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:1 }
+
+#classes-container { display:flex; flex-direction:column; gap:12px; margin-bottom: 16px; }
+
+.class-card {
+  border: 1px solid #eef0ef;
+  border-radius: 12px;
+  padding: 0;
+  overflow: visible;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), #fff);
+  box-shadow: 0 4px 12px rgba(20,20,20,0.03);
+  transition: box-shadow 0.2s ease;
+}
+
+.class-card:hover {
+  box-shadow: 0 8px 24px rgba(20,20,20,0.06);
+}
+
+.class-header { display:flex; gap:8px; align-items:center; padding:12px 16px; }
+
+.class-input { 
+  font-size: 16px; 
+  padding: 6px 8px; 
+  border: 1px solid transparent; 
+  border-radius: 6px; 
+  font-weight: 600; 
+  width: 140px; 
+  transition: all 0.2s ease;
+}
+
+.class-input:hover { border: 1px solid #eef0ef; background: #f9f9f9; }
+.class-input:focus { border: 1px solid #8ab4f8; background: #fff; outline: none; }
+
+.edit-icon { font-size: 16px; color: #9aa0a6; cursor: text; }
+
+.export-btn { background:transparent; border:none; cursor:pointer; color: #5f6368; display:flex; align-items:center; gap: 6px; font-weight: 500; font-size: 14px; padding: 8px 12px; border-radius: 8px; transition: background 0.2s ease; }
+.export-btn:hover { background: #f1f3f4; color: #202124; }
+
+.icon-btn { padding: 6px; color: #9aa0a6; }
+.icon-btn:hover { color: #5f6368; }
+.icon-btn .material-symbols-outlined { font-size: 20px; }
+
+.divider { height:1px; background:#f3f4f3 }
+.class-body { padding:16px }
+
+.sample-text { margin-bottom:8px; color:#5f6368; font-size:13px; font-weight: 500; }
+
+.camera-box { background:#111; height:150px; border-radius:8px; overflow:hidden; display:flex; align-items:center; justify-content:center; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+.camera-box video { width:100%; height:100%; object-fit:cover; transform: scaleX(-1); /* Mirror class-card webcam */ }
+
+.sample-buttons { display:flex; gap:8px; margin-top:10px; flex-wrap: wrap; }
+.sample-btn { background:#f6f7f7; border:1px solid #eef0ef; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight: 500; font-size: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: all 0.15s ease; }
+.sample-btn:active { transform: scale(0.97); }
+
+.sample-btn .material-symbols-outlined { font-size: 24px; }
+
+.sample-btn.blue { background:#e8f0fe; color:#1967d2; border-color: #d2e3fc; }
+.sample-btn.blue:hover { background: #d2e3fc; }
+
+.sample-btn.blue-light { background:#f8f9fa; color:#1967d2; border-color: #eef0ef; }
+.sample-btn.blue-light:hover { background: #f1f3f4; }
+
+.sample-btn.gray { background:#f1f3f4; color:#3c4043; border-color: #dadce0; }
+.sample-btn.gray:hover { background: #e8eaed; }
+
+.sample-btn.record { background:#fce8e6; color:#d93025; border-color: #fad2cf; }
+.sample-btn.record:hover { background: #fad2cf; }
+
+.sample-btn.record-hold-btn { padding: 12px; font-size: 15px; font-weight: 600; flex-direction: row; }
+.sample-btn.icon-only { padding: 10px; flex-direction: row; }
+.sample-btn.icon-only .material-symbols-outlined { font-size: 20px; }
+
+.counter { margin-top:0px; color:#5f6368; font-size:13px; font-weight: 500; margin-bottom: 8px; }
+.gallery { display:flex; gap:6px; flex-wrap:wrap; max-height: 200px; overflow-y: auto; align-content: flex-start; }
+.gallery img { width:52px; height:52px; object-fit:cover; border-radius:6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+/* Custom scrollbar for gallery */
+.gallery::-webkit-scrollbar { width: 6px; }
+.gallery::-webkit-scrollbar-track { background: transparent; }
+.gallery::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
+.gallery::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
+
+.add-class-btn {
+  width:100%; min-height:64px; border:2px dashed #c4c7c5; background: rgba(255,255,255,0.65); color:#5f6368; font-size:16px; font-weight:600; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; transition: all 0.2s ease; cursor: pointer;
+}
+.add-class-btn:hover { background: rgba(255,255,255,1); border-color: #8ab4f8; color: #1967d2; }
+
+/* Sticky Cards */
+.training-card, .preview-card { 
+  width:100%; 
+  max-width:340px; 
+  background:#fff; 
+  border-radius:12px; 
+  border:1px solid #eef0ef; 
+  box-shadow:0 8px 24px rgba(20,20,20,0.06); 
+  position:sticky; 
+  top:24px;
+  padding:16px; 
+  margin-bottom: 24px;
+}
+.training-card h2, .preview-card h2 { margin:0; font-size:20px; font-weight: 600; color: #202124; }
+.training-card .train-btn { width:100%; margin-top:16px; height:44px; background:#f1f3f4; color:#80868b; font-weight:600; border-radius:8px; border:none; transition: background 0.2s; }
+.training-card .train-btn:not([disabled]):hover { background: #e8eaed; color: #202124; }
+
+.advanced-box { margin-top: 16px; border-top:1px solid #f3f4f3; display:flex; flex-direction:column; color:#5f6368; font-size: 14px; font-weight: 500; }
+.advanced-header { padding-top:14px; display:flex; justify-content:space-between; align-items: center; cursor: pointer; color: #1967d2; font-weight: 500; }
+.advanced-header:hover { color: #174ea6; }
+.advanced-header .arrow { transition: transform 0.2s; }
+.advanced-header.open .arrow { transform: rotate(180deg); }
+.advanced-content { margin-top: 16px; display: flex; flex-direction: column; gap: 16px; font-size: 14px; }
+.adv-row { display: flex; justify-content: space-between; align-items: center; }
+.adv-row label { font-weight: 600; color: #202124; }
+.adv-input-group { display: flex; align-items: center; gap: 8px; }
+.adv-input { border: 1px solid #eef0ef; background: #f8f9fa; border-radius: 4px; padding: 6px 8px; font-size: 14px; width: 80px; text-align: left; color: #1967d2; }
+.adv-input:focus { border-color: #8ab4f8; background: #fff; }
+.help-icon { font-size: 18px; color: #9aa0a6; cursor: help; }
+.adv-divider { height: 1px; background: #f3f4f3; width: 100%; margin: 4px 0; }
+.adv-action-btn { background: transparent; border: none; display: flex; justify-content: space-between; width: 100%; color: #9aa0a6; font-weight: 500; padding: 8px 0; font-size: 14px; align-items: center; cursor: pointer; transition: color 0.2s; }
+.adv-action-btn:hover { color: #5f6368; }
+
+.training-status { margin-top: 12px; font-size: 14px; color: #1967d2; font-weight: 500; margin-bottom: 4px; }
+.train-btn.training { background: #e8f0fe !important; color: #1967d2 !important; border: 1px solid #d2e3fc; }
+
+/* Preview Card additions */
+.preview-input-header { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #5f6368; padding: 16px 0 12px; }
+.preview-source-select { margin-left: auto; border: 1px solid #eef0ef; background: #f1f3f4; border-radius: 16px; padding: 4px 12px; font-size: 13px; font-weight: 500; color: #3c4043; cursor: pointer; }
+.preview-webcam-box { width: 100%; min-height: 260px; aspect-ratio: 1; background: #111; border-radius: 8px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+/* Mirror the preview webcam so it feels like looking in a mirror */
+.preview-webcam-box video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+.preview-webcam-controls { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; color: white; opacity: 0.8; pointer-events: none; }
+.preview-arrow-down { display: flex; justify-content: center; margin: 12px 0; }
+.preview-arrow-down span { background: #eef0ef; color: #9aa0a6; border-radius: 50%; padding: 4px; font-size: 18px; }
+.preview-output-section h3 { font-size: 16px; font-weight: 500; color: #5f6368; margin-bottom: 12px; }
+
+/* Toggle Switch */
+.switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; }
+input:checked + .slider { background-color: #5f6368; }
+input:checked + .slider:before { transform: translateX(14px); }
+.slider.round { border-radius: 20px; }
+.slider.round:before { border-radius: 50%; }
+
+/* Output Probability Bars */
+.prob-bar-container { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.prob-label { font-size: 14px; font-weight: 600; width: 60px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prob-bar-bg { flex: 1; height: 24px; background: #fce8e6; border-radius: 4px; overflow: hidden; position: relative; }
+.prob-bar-fill { height: 100%; background: #e8710a; transition: width 0.1s ease; }
+.prob-percentage { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+
+.preview-header { display:flex; align-items:center; justify-content:space-between; padding-bottom: 8px; }
+.preview-text { color:#5f6368; line-height:1.5; font-size: 14px; padding-top:8px; }
+
+input.class-input, button { outline:none }
+button:focus-visible, input:focus-visible { outline:2px solid #8ab4f8; outline-offset:2px }
+
+/* Export dropdown */
+.export-dropdown { position: relative; display: inline-block; }
+.export-dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #fff;
+  border: 1px solid #eef0ef;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(20,20,20,0.12);
+  z-index: 100;
+  min-width: 180px;
+  overflow: hidden;
+}
+.export-dropdown-menu.open { display: block; }
+.export-dropdown-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #202124;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.export-dropdown-menu button:hover { background: #f1f3f4; }
+.export-dropdown-menu .format-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: #e8f0fe;
+  color: #1967d2;
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-left: auto;
+}
+
+@media (max-width: 1200px) {
+  .app-container { grid-template-columns: 1fr; padding:20px }
+  .left-panel, .center-panel, .right-panel { width:100%; height: auto; }
+  .training-card, .preview-card { position:static; max-width: 100%; }
+}
