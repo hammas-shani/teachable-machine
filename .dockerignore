@@ -1,0 +1,13 @@
+venv
+__pycache__
+.git
+*.pyc
+*.pyo
+dataset
+datasets
+data
+models
+*.h5
+*.keras
+*.pt
+*.pth
