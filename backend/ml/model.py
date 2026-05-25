@@ -25,7 +25,7 @@ if sys.stderr and hasattr(sys.stderr, 'reconfigure'):
         pass
 
 TEMPERATURE = 5.0   # higher = more decisive softmax distribution
-CONFIDENCE_THRESHOLD = 0.75  # minimum probability required to not be marked Unknown
+CONFIDENCE_THRESHOLD = 0.65  # minimum probability required (65%) to not be marked Unknown
 
 
 class CentroidClassifier:
@@ -103,7 +103,7 @@ def predict(features, face_found: bool = True):
     Predict the class of a feature vector.
 
     Args:
-        features:   1280-dim float32 feature vector from MobileNetV2
+        features:   960-dim float32 feature vector from MobileNetV3
         face_found: result of Haar cascade detection.
                     - face_mode=True  → face_found=False returns Unknown (empty frame)
                     - face_mode=False → face_found is IGNORED (generalised object mode)
@@ -111,7 +111,7 @@ def predict(features, face_found: bool = True):
     Returns dict:
       - predicted_class: class name or "Unknown"
       - confidence: 1.0 for a match, 0.0 for Unknown
-      - all_probs: {class: probability} — winner = 1.0, rest = 0.0
+      - all_probs: {class: probability} — actual softmax distribution
       - is_uncertain: bool
       - l2_distance: distance to nearest centroid
     """
@@ -157,7 +157,7 @@ def predict(features, face_found: bool = True):
         display_probs = {str(cls): 0.0 for cls in classes}
         display_confidence = 0.0
     else:
-        # Winner gets 100%, all others 0%
+        # If confidence is above threshold, winner gets 100%, others get 0%
         display_probs = {str(cls): 0.0 for cls in classes}
         display_probs[str(classes[best_idx])] = 1.0
         display_confidence = 1.0

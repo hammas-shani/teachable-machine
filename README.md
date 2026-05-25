@@ -1,30 +1,21 @@
-# Google Teachable (Backend)
+# Google Teachable Machine (Backend)
 
-Backend FastAPI app for image upload, training, and prediction.
+Backend API built with FastAPI for image upload, model training, and prediction.
 
-Quick start
+## Features
 
-1. Create and activate a virtualenv, then install requirements:
+- Upload images by class
+- Train custom image classification model
+- Predict images using trained model
+- FastAPI REST API
+- Swagger API documentation
+- Pytest support
+
+---
+
+## Project Setup
+
+### 1. Create Virtual Environment
 
 ```bash
 python -m venv venv
-venv\Scripts\Activate.ps1  # PowerShell on Windows
-pip install -r backend/requirements.txt
-```
-
-2. Run the API from the `backend/` folder:
-
-```bash
-cd backend
-uvicorn main:app --reload
-```
-
-3. Open the interactive docs at http://127.0.0.1:8000/docs
-
-Testing
-
-Run tests with:
-
-```bash
-pytest -q
-```

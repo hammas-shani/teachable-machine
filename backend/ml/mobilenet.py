@@ -1,11 +1,11 @@
 """
-mobilenet.py — MobileNetV2 feature extractor with automatic face detection + crop.
+mobilenet.py — MobileNetV3 feature extractor with automatic face detection + crop.
 
 Pipeline for each image:
   1. Detect face with OpenCV Haar cascade
   2. Crop face with padding (or use full image if no face detected)
-  3. Pass crop through MobileNetV2 conv layers + AdaptiveAvgPool
-  4. Return 1280-dim float32 feature vector
+  3. Pass crop through MobileNetV3 conv layers + AdaptiveAvgPool
+  4. Return 960-dim float32 feature vector
 
 For prediction: use extract_features_with_detection() which also returns
 face_found (False = no person in frame → caller returns Unknown).
@@ -35,10 +35,10 @@ if sys.stderr and hasattr(sys.stderr, 'reconfigure'):
         pass
 
 # ── Model ──────────────────────────────────────────────────────────────────────
-_mobilenet = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.IMAGENET1K_V1)
+_mobilenet = models.mobilenet_v3_large(weights=models.MobileNet_V3_Large_Weights.IMAGENET1K_V1)
 _mobilenet.eval()
 
-# Conv features + global avg pool → (1, 1280, 1, 1)
+# Conv features + global avg pool → (1, 960, 1, 1)
 feature_extractor = torch.nn.Sequential(
     _mobilenet.features,
     torch.nn.AdaptiveAvgPool2d((1, 1))
@@ -70,14 +70,14 @@ def _to_uint8_rgb(image: np.ndarray) -> np.ndarray:
 
 def extract_features(image) -> np.ndarray:
     """
-    Extract a 1280-dim feature vector from an image, focusing on the face.
+    Extract a 960-dim feature vector from an image, focusing on the face.
     Used by the TRAINER — face_found flag is ignored (always extracts features).
 
     Args:
         image: numpy ndarray (H, W, 3) in RGB or PIL Image.
                Accepts uint8 [0-255] OR float32 in any range.
     Returns:
-        numpy float32 array of shape (1280,)
+        numpy float32 array of shape (960,)
     """
     face_crop, _ = _extract_face_crop(image)
     return _run_mobilenet(face_crop)
@@ -91,7 +91,7 @@ def extract_features_with_detection(image):
     Args:
         image: numpy ndarray (H, W, 3) RGB or PIL Image.
     Returns:
-        (features: np.ndarray shape (1280,), face_found: bool)
+        (features: np.ndarray shape (960,), face_found: bool)
     """
     face_crop, face_found = _extract_face_crop(image)
     features = _run_mobilenet(face_crop)
@@ -117,12 +117,12 @@ def _extract_face_crop(image) -> tuple:
 
 
 def _run_mobilenet(face_crop: np.ndarray) -> np.ndarray:
-    """Run the crop through MobileNetV2 and return a 1280-dim feature vector."""
+    """Run the crop through MobileNetV3 and return a 960-dim feature vector."""
     # ── 3. Apply ImageNet transform ────────────────────────────────────────────
     tensor = _transform(face_crop).unsqueeze(0)  # (1, 3, 224, 224)
 
-    # ── 4. Forward pass through MobileNetV2 feature extractor ─────────────────
+    # ── 4. Forward pass through MobileNetV3 feature extractor ─────────────────
     with torch.no_grad():
-        features = feature_extractor(tensor)       # (1, 1280, 1, 1)
+        features = feature_extractor(tensor)       # (1, 960, 1, 1)
 
-    return features.flatten().numpy()              # (1280,) float32
+    return features.flatten().numpy()              # (960,) float32
